@@ -42,9 +42,8 @@ Latest Version: 1.0.0
 single-sms-endpoint=https://api2.tiaraconnect.io/api/messaging/sendsms
 bulk-sms-endpoint=https://api2.tiaraconnect.io/api/messaging/sendbatch
 check-account-balance-endpoint=https://api2.tiaraconnect.io/api/messaging/checkbalance
-api-key=
-mo-url=
-sender-id=
+api-key=api-key
+sender-id=sender-id
 ```
 
 ### Properties Description
