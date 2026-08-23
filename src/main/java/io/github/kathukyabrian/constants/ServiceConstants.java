@@ -9,4 +9,6 @@ public class ServiceConstants {
     public static String CHECK_ACCOUNT_BALANCE_ENDPOINT_CONFIG_KEY = "check-account-balance-endpoint";
     public static String API_KEY_CONFIG_KEY = "api-key";
     public static String SENDER_ID_CONFIG_KEY = "sender-id";
+    public static String READ_TIMEOUT_CONFIG_KEY = "read-timeout";
+    public static String CONNECT_TIMEOUT_CONFIG_KEY = "connect-timeout";
 }

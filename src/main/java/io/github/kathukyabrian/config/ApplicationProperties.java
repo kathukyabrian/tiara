@@ -9,4 +9,6 @@ public class ApplicationProperties {
     private String checkAccountBalanceEndpoint;
     private String apiKey;
     private String senderId;
+    private Integer readTimeout = 10;
+    private Integer connectTimeout = 2;
 }

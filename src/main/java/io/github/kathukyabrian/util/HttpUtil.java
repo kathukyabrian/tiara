@@ -5,11 +5,17 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class HttpUtil {
-    public static String post(String url, String body, Map<String, String> headerMap, MediaType mediaType) throws IOException {
+    public static String post(String url, String body, Map<String, String> headerMap, MediaType mediaType, Integer connectTimeout, Integer readTimeout) throws IOException {
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient
+                .Builder()
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
         RequestBody requestBody = RequestBody.create(body, mediaType);
 
         Request.Builder requestBuilder = new Request.Builder()
@@ -25,8 +31,13 @@ public class HttpUtil {
         return getResponse(client, request);
     }
 
-    public static String get(String url, Map<String, String> headerMap, MediaType mediaType) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+    public static String get(String url, Map<String, String> headerMap, Integer connectTimeout, Integer readTimeout) throws IOException {
+        OkHttpClient client = new OkHttpClient
+                .Builder()
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url);
 

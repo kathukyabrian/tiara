@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Tiara {
     private static final Logger logger = LogManager.getLogger(Tiara.class);
@@ -30,7 +29,7 @@ public class Tiara {
                 applicationProperties.getSenderId(), recipient, message, refId
         );
 
-        return sendSingleSMS(refId, recipient, applicationProperties.getApiKey(), applicationProperties.getSingleSMSEndpoint(), singleSMSRequest);
+        return sendSingleSMS(refId, recipient, applicationProperties.getApiKey(), applicationProperties.getSingleSMSEndpoint(), singleSMSRequest, applicationProperties.getConnectTimeout(), applicationProperties.getReadTimeout());
     }
 
     public static SingleSMSResponse sendSingle(String recipient, String message, String refId, String senderId, String apiKey) {
@@ -53,7 +52,7 @@ public class Tiara {
             apiKey = applicationProperties.getApiKey();
         }
 
-        return sendSingleSMS(refId, recipient, apiKey, applicationProperties.getSingleSMSEndpoint(), singleSMSRequest);
+        return sendSingleSMS(refId, recipient, apiKey, applicationProperties.getSingleSMSEndpoint(), singleSMSRequest, applicationProperties.getConnectTimeout(), applicationProperties.getReadTimeout());
     }
 
 
@@ -75,7 +74,7 @@ public class Tiara {
 
         String apiKey = applicationProperties.getApiKey();
 
-        return sendBulkSMS(applicationProperties.getBulkSMSEndpoint(), refId, apiKey, smsRequests);
+        return sendBulkSMS(applicationProperties.getBulkSMSEndpoint(), refId, apiKey, smsRequests, applicationProperties.getConnectTimeout(), applicationProperties.getReadTimeout());
     }
 
     public static List<SingleSMSResponse> sendBulk(List<SingleSMS> messages, String refId, String senderId, String apiKey) {
@@ -103,7 +102,7 @@ public class Tiara {
             apiKey = applicationProperties.getApiKey();
         }
 
-        return sendBulkSMS(applicationProperties.getBulkSMSEndpoint(), refId, apiKey, smsRequests);
+        return sendBulkSMS(applicationProperties.getBulkSMSEndpoint(), refId, apiKey, smsRequests, applicationProperties.getConnectTimeout(), applicationProperties.getReadTimeout());
     }
 
     public static TiaraBalanceResponse getBalance() {
@@ -114,21 +113,21 @@ public class Tiara {
         headerMap.put("Authorization", "Bearer " + applicationProperties.getApiKey());
 
         try {
-            String response = HttpUtil.get(applicationProperties.getCheckAccountBalanceEndpoint(), headerMap, MediaType.get("application/json; charset=utf-8"));
+            String response = HttpUtil.get(applicationProperties.getCheckAccountBalanceEndpoint(), headerMap, applicationProperties.getConnectTimeout(), applicationProperties.getReadTimeout());
             return objectMapper.readValue(response, TiaraBalanceResponse.class);
         } catch (IOException ex) {
             return new TiaraBalanceResponse().fail(ex.getMessage());
         }
     }
 
-    private static SingleSMSResponse sendSingleSMS(String refId, String recipient, String apiKey, String endpoint, SingleSMSRequest singleSMSRequest) {
+    private static SingleSMSResponse sendSingleSMS(String refId, String recipient, String apiKey, String endpoint, SingleSMSRequest singleSMSRequest, Integer connectTimeout, Integer readTimeout) {
         try {
             String request = objectMapper.writeValueAsString(singleSMSRequest);
 
             Map<String, String> headerMap = new HashMap<>();
             headerMap.put("Authorization", "Bearer " + apiKey);
 
-            String response = HttpUtil.post(endpoint, request, headerMap, MediaType.get("application/json; charset=utf-8"));
+            String response = HttpUtil.post(endpoint, request, headerMap, MediaType.get("application/json; charset=utf-8"), connectTimeout, readTimeout);
 
             TiaraSMSResponse tiaraSMSResponse = objectMapper.readValue(response, TiaraSMSResponse.class);
 
@@ -138,20 +137,20 @@ public class Tiara {
         }
     }
 
-    public static List<SingleSMSResponse> sendBulkSMS(String endpoint, String refId, String apiKey, List<SingleSMSRequest> smsRequests) {
+    public static List<SingleSMSResponse> sendBulkSMS(String endpoint, String refId, String apiKey, List<SingleSMSRequest> smsRequests, Integer connectTimeout, Integer readTimeout) {
         try {
             String request = objectMapper.writeValueAsString(smsRequests);
 
             Map<String, String> headerMap = new HashMap<>();
             headerMap.put("Authorization", "Bearer " + apiKey);
 
-            String response = HttpUtil.post(endpoint, request, headerMap, MediaType.get("application/json; charset=utf-8"));
+            String response = HttpUtil.post(endpoint, request, headerMap, MediaType.get("application/json; charset=utf-8"), connectTimeout, readTimeout);
 
             List<TiaraSMSResponse> bulkSMSResponse = objectMapper.readValue(response, new TypeReference<List<TiaraSMSResponse>>() {
             });
 
             return bulkSMSResponse.stream().map(resp -> new SingleSMSResponse(resp, refId))
-                    .collect(Collectors.toUnmodifiableList());
+                    .toList();
         } catch (IOException e) {
             return null;
         }

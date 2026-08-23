@@ -5,7 +5,7 @@
 
     <groupId>io.github.kathukyabrian</groupId>
     <artifactId>tiara</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>tiara</name>
     <description>easily send sms through the tiara sms gateway.</description>

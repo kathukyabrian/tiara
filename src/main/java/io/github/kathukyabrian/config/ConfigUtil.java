@@ -29,6 +29,9 @@ public class ConfigUtil {
         applicationProperties.setCheckAccountBalanceEndpoint(properties.getProperty(ServiceConstants.CHECK_ACCOUNT_BALANCE_ENDPOINT_CONFIG_KEY));
         applicationProperties.setApiKey(properties.getProperty(ServiceConstants.API_KEY_CONFIG_KEY));
         applicationProperties.setSenderId(properties.getProperty(ServiceConstants.SENDER_ID_CONFIG_KEY));
+
+        applicationProperties.setReadTimeout(Integer.valueOf(properties.getProperty(ServiceConstants.READ_TIMEOUT_CONFIG_KEY)));
+        applicationProperties.setConnectTimeout(Integer.valueOf(properties.getProperty(ServiceConstants.CONNECT_TIMEOUT_CONFIG_KEY)));
         return applicationProperties;
     }
 
