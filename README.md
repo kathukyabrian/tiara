@@ -29,10 +29,10 @@ For Maven:
 <dependency>
     <groupId>io.github.kathukyabrian</groupId>
     <artifactId>tiara</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
-Latest Version: 1.0.0
+Latest Version: 1.0.1
 
 ## Quick Start
 ### Configuration
@@ -49,13 +49,15 @@ connect-timeout=
 ```
 
 ### Properties Description
-| Property                       | Description                                                                                   |
-|--------------------------------|-----------------------------------------------------------------------------------------------|
-| single-sms-endpoint            | The endpoint to send single sms on the Tiara SMS Gateway.                                     |
-| bulk-sms-endpoint              | The endpoint to send bulk sms on the Tiara SMS Gateway.                                       |
-| check-account-balance-endpoint | The endpoint to query sms units balance on the Tiara SMS Gateway.                             |
-| api-key                        | Provided by Tiara SMS gateway upon creation of an application. Used to authenticate all APIs. |
-| sender-id                      | The source address as configured on the Tiara SMS gateway.                                    |
+| Property                       | Description                                                                                            |
+|--------------------------------|--------------------------------------------------------------------------------------------------------|
+| single-sms-endpoint            | The endpoint to send single sms on the Tiara SMS Gateway.                                              |
+| bulk-sms-endpoint              | The endpoint to send bulk sms on the Tiara SMS Gateway.                                                |
+| check-account-balance-endpoint | The endpoint to query sms units balance on the Tiara SMS Gateway.                                      |
+| api-key                        | Provided by Tiara SMS gateway upon creation of an application. Used to authenticate all APIs.          |
+| sender-id                      | The source address as configured on the Tiara SMS gateway.                                             |
+| connect-timeout                | Time in seconds after which a connection attempt to the Tiara SMS gateway is dropped.                  |
+| read-timeout                   | Time in seconds after which if a response has not come from the gateway, the calling application drops |
 
 ### Usage
 - You are ready to use the library.
