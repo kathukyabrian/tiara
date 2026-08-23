@@ -84,6 +84,32 @@ public class TestController {
 }
 ```
 
+- there's an option that allows you to send an optional api key and  sender id. This option is available for applications with multiple configurations.
+- it falls back to the supplied configuration if you pass null values to any of those configs.
+
+```java
+import io.github.kathukyabrian.core.Tiara;
+import io.github.kathukyabrian.dto.SingleSMSResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/test")
+public class TestController {
+    @PostMapping("/sms")
+    public ResponseEntity<SingleSMSResponse> sendSMS(@RequestBody Map<String, String> body) {
+        SingleSMSResponse response = Tiara.sendSingle(body.get("to"), body.get("message"), UUID.randomUUID().toString(), "sender-id", "api-key");
+        return ResponseEntity.ok(response);
+    }
+}
+```
+
 #### Send Bulk SMS
 - on your caller logic use the __sendBulk()__ method to send single SMS.
 ```java
@@ -113,10 +139,45 @@ public class TestController {
         smsList.add(one);
         smsList.add(two);
         List<SingleSMSResponse> bulkResponse = Tiara.sendBulk(smsList, UUID.randomUUID().toString());
-        return ResponseEntity.ok(Tiara.sendBulk(bulkResponse);
+        return ResponseEntity.ok(Tiara.sendBulk(bulkResponse));
     }
 }
 ```
+
+- there's an option that allows you to send an optional api key and  sender id. This option is available for applications with multiple configurations.
+- it falls back to the supplied configuration if you pass null values to any of those configs.
+```java
+package com.example.demo;
+
+import io.github.kathukyabrian.core.Tiara;
+import io.github.kathukyabrian.dto.SingleSMS;
+import io.github.kathukyabrian.dto.SingleSMSResponse;
+import io.github.kathukyabrian.dto.TiaraBalanceResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/test")
+public class TestController {
+    @PostMapping("/sms/bulk")
+    public ResponseEntity<List<SingleSMSResponse>> sendBulk(){
+        List<SingleSMS> smsList = new ArrayList<>();
+        SingleSMS one = new SingleSMS("0740272915", "Hello Brian");
+        SingleSMS two = new SingleSMS("078786481", "Hello Brian");
+
+        smsList.add(one);
+        smsList.add(two);
+        List<SingleSMSResponse> bulkResponse = Tiara.sendBulk(smsList, UUID.randomUUID().toString(), "sender-id", "api-key");
+        return ResponseEntity.ok(Tiara.sendBulk(bulkResponse));
+    }
+}
+```
+
 
 #### Check Balance
 - on your caller logic use the __getBalance()__ method to get balance for the current account(API Key owner).

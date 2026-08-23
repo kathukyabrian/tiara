@@ -30,23 +30,32 @@ public class Tiara {
                 applicationProperties.getSenderId(), recipient, message, refId
         );
 
-        String apiKey = applicationProperties.getApiKey();
-
-        try {
-            String request = objectMapper.writeValueAsString(singleSMSRequest);
-
-            Map<String, String> headerMap = new HashMap<>();
-            headerMap.put("Authorization", "Bearer " + apiKey);
-
-            String response = HttpUtil.post(applicationProperties.getSingleSMSEndpoint(), request, headerMap, MediaType.get("application/json; charset=utf-8"));
-
-            TiaraSMSResponse tiaraSMSResponse = objectMapper.readValue(response, TiaraSMSResponse.class);
-
-            return new SingleSMSResponse(tiaraSMSResponse, refId);
-        } catch (IOException e) {
-            return new SingleSMSResponse().fail(e, refId, recipient);
-        }
+        return sendSingleSMS(refId, recipient, applicationProperties.getApiKey(), applicationProperties.getSingleSMSEndpoint(), singleSMSRequest);
     }
+
+    public static SingleSMSResponse sendSingle(String recipient, String message, String refId, String senderId, String apiKey) {
+        logger.info("tiara|sending sms to phone number: {}|refId: {}", recipient, refId);
+        if (refId == null) {
+            refId = UUID.randomUUID().toString();
+        }
+
+        ApplicationProperties applicationProperties = ServiceRepositoryFactory.getApplicationProperties();
+
+        if (senderId == null || senderId.isEmpty()) {
+            senderId = applicationProperties.getSenderId();
+        }
+
+        SingleSMSRequest singleSMSRequest = new SingleSMSRequest(
+                senderId, recipient, message, refId
+        );
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            apiKey = applicationProperties.getApiKey();
+        }
+
+        return sendSingleSMS(refId, recipient, apiKey, applicationProperties.getSingleSMSEndpoint(), singleSMSRequest);
+    }
+
 
     public static List<SingleSMSResponse> sendBulk(List<SingleSMS> messages, String refId) {
         logger.info("tiara|sending sms to {} recipients|refId: {}", messages.size(), refId);
@@ -66,23 +75,35 @@ public class Tiara {
 
         String apiKey = applicationProperties.getApiKey();
 
-        try {
-            String request = objectMapper.writeValueAsString(smsRequests);
+        return sendBulkSMS(applicationProperties.getBulkSMSEndpoint(), refId, apiKey, smsRequests);
+    }
 
-            Map<String, String> headerMap = new HashMap<>();
-            headerMap.put("Authorization", "Bearer " + apiKey);
-
-            String response = HttpUtil.post(applicationProperties.getBulkSMSEndpoint(), request, headerMap, MediaType.get("application/json; charset=utf-8"));
-
-            List<TiaraSMSResponse> bulkSMSResponse = objectMapper.readValue(response, new TypeReference<List<TiaraSMSResponse>>() {
-            });
-
-            String finalRefId = refId;
-            return bulkSMSResponse.stream().map(resp -> new SingleSMSResponse(resp, finalRefId))
-                    .collect(Collectors.toUnmodifiableList());
-        } catch (IOException e) {
-            return null;
+    public static List<SingleSMSResponse> sendBulk(List<SingleSMS> messages, String refId, String senderId, String apiKey) {
+        logger.info("tiara|sending sms to {} recipients|refId: {}", messages.size(), refId);
+        if (refId == null) {
+            refId = UUID.randomUUID().toString();
         }
+
+        ApplicationProperties applicationProperties = ServiceRepositoryFactory.getApplicationProperties();
+
+        if (senderId == null || senderId.isEmpty()) {
+            senderId = applicationProperties.getSenderId();
+        }
+
+        List<SingleSMSRequest> smsRequests = new ArrayList<>();
+        for (SingleSMS singleSMS : messages) {
+            SingleSMSRequest singleSMSRequest = new SingleSMSRequest(
+                    senderId, singleSMS.getTo(), singleSMS.getMessage(), refId
+            );
+            smsRequests.add(singleSMSRequest);
+        }
+
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            apiKey = applicationProperties.getApiKey();
+        }
+
+        return sendBulkSMS(applicationProperties.getBulkSMSEndpoint(), refId, apiKey, smsRequests);
     }
 
     public static TiaraBalanceResponse getBalance() {
@@ -97,6 +118,42 @@ public class Tiara {
             return objectMapper.readValue(response, TiaraBalanceResponse.class);
         } catch (IOException ex) {
             return new TiaraBalanceResponse().fail(ex.getMessage());
+        }
+    }
+
+    private static SingleSMSResponse sendSingleSMS(String refId, String recipient, String apiKey, String endpoint, SingleSMSRequest singleSMSRequest) {
+        try {
+            String request = objectMapper.writeValueAsString(singleSMSRequest);
+
+            Map<String, String> headerMap = new HashMap<>();
+            headerMap.put("Authorization", "Bearer " + apiKey);
+
+            String response = HttpUtil.post(endpoint, request, headerMap, MediaType.get("application/json; charset=utf-8"));
+
+            TiaraSMSResponse tiaraSMSResponse = objectMapper.readValue(response, TiaraSMSResponse.class);
+
+            return new SingleSMSResponse(tiaraSMSResponse, refId);
+        } catch (IOException e) {
+            return new SingleSMSResponse().fail(e, refId, recipient);
+        }
+    }
+
+    public static List<SingleSMSResponse> sendBulkSMS(String endpoint, String refId, String apiKey, List<SingleSMSRequest> smsRequests) {
+        try {
+            String request = objectMapper.writeValueAsString(smsRequests);
+
+            Map<String, String> headerMap = new HashMap<>();
+            headerMap.put("Authorization", "Bearer " + apiKey);
+
+            String response = HttpUtil.post(endpoint, request, headerMap, MediaType.get("application/json; charset=utf-8"));
+
+            List<TiaraSMSResponse> bulkSMSResponse = objectMapper.readValue(response, new TypeReference<List<TiaraSMSResponse>>() {
+            });
+
+            return bulkSMSResponse.stream().map(resp -> new SingleSMSResponse(resp, refId))
+                    .collect(Collectors.toUnmodifiableList());
+        } catch (IOException e) {
+            return null;
         }
     }
 }
