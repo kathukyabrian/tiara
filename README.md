@@ -44,6 +44,8 @@ bulk-sms-endpoint=https://api2.tiaraconnect.io/api/messaging/sendbatch
 check-account-balance-endpoint=https://api2.tiaraconnect.io/api/messaging/checkbalance
 api-key=api-key
 sender-id=sender-id
+read-timeout=
+connect-timeout=
 ```
 
 ### Properties Description
