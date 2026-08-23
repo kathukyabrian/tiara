@@ -30,8 +30,12 @@ public class ConfigUtil {
         applicationProperties.setApiKey(properties.getProperty(ServiceConstants.API_KEY_CONFIG_KEY));
         applicationProperties.setSenderId(properties.getProperty(ServiceConstants.SENDER_ID_CONFIG_KEY));
 
-        applicationProperties.setReadTimeout(Integer.valueOf(properties.getProperty(ServiceConstants.READ_TIMEOUT_CONFIG_KEY)));
-        applicationProperties.setConnectTimeout(Integer.valueOf(properties.getProperty(ServiceConstants.CONNECT_TIMEOUT_CONFIG_KEY)));
+        if (properties.contains(ServiceConstants.READ_TIMEOUT_CONFIG_KEY)) {
+            applicationProperties.setReadTimeout(Integer.valueOf(properties.getProperty(ServiceConstants.READ_TIMEOUT_CONFIG_KEY)));
+        }
+        if (properties.contains(ServiceConstants.CONNECT_TIMEOUT_CONFIG_KEY)) {
+            applicationProperties.setConnectTimeout(Integer.valueOf(properties.getProperty(ServiceConstants.CONNECT_TIMEOUT_CONFIG_KEY)));
+        }
         return applicationProperties;
     }
 

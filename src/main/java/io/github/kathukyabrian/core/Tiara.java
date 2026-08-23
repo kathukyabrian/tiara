@@ -3,6 +3,7 @@ package io.github.kathukyabrian.core;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kathukyabrian.config.ApplicationProperties;
+import io.github.kathukyabrian.constants.ServiceConstants;
 import io.github.kathukyabrian.core.factory.ServiceRepositoryFactory;
 import io.github.kathukyabrian.dto.*;
 import io.github.kathukyabrian.util.HttpUtil;
@@ -58,6 +59,12 @@ public class Tiara {
 
     public static List<SingleSMSResponse> sendBulk(List<SingleSMS> messages, String refId) {
         logger.info("tiara|sending sms to {} recipients|refId: {}", messages.size(), refId);
+
+        List<SingleSMSResponse> bulkSizeValidationResponse = validateBulkSize(messages.size(), refId);
+        if (bulkSizeValidationResponse != null) {
+            return bulkSizeValidationResponse;
+        }
+
         if (refId == null) {
             refId = UUID.randomUUID().toString();
         }
@@ -79,6 +86,12 @@ public class Tiara {
 
     public static List<SingleSMSResponse> sendBulk(List<SingleSMS> messages, String refId, String senderId, String apiKey) {
         logger.info("tiara|sending sms to {} recipients|refId: {}", messages.size(), refId);
+
+        List<SingleSMSResponse> bulkSizeValidationResponse = validateBulkSize(messages.size(), refId);
+        if (bulkSizeValidationResponse != null) {
+            return bulkSizeValidationResponse;
+        }
+
         if (refId == null) {
             refId = UUID.randomUUID().toString();
         }
@@ -154,5 +167,16 @@ public class Tiara {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    private static List<SingleSMSResponse> validateBulkSize(int messageCount, String refId) {
+        if (messageCount > ServiceConstants.TIARA_BATCH_SMS_LIMIT) {
+            SingleSMSResponse singleSMSResponse = new SingleSMSResponse().fail(new RuntimeException("Maximum batch size is " + ServiceConstants.TIARA_BATCH_SMS_LIMIT), refId, null);
+            List<SingleSMSResponse> errorResponse = new ArrayList<>();
+            errorResponse.add(singleSMSResponse);
+            return errorResponse;
+        }
+
+        return null;
     }
 }

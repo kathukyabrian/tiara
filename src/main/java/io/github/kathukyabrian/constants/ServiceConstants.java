@@ -3,6 +3,8 @@ package io.github.kathukyabrian.constants;
 public class ServiceConstants {
     public static String TIARA_CONFIG_ENV_VARIABLE = "TIARA_CONFIG";
     public static String DEFAULT_CONFIG_FILE_NAME = "tiara.properties";
+    public static Integer TIARA_BATCH_SMS_LIMIT = 20;
+
 
     public static String SINGLE_SMS_ENDPOINT_CONFIG_KEY = "single-sms-endpoint";
     public static String BULK_SMS_ENDPOINT_CONFIG_KEY = "bulk-sms-endpoint";
