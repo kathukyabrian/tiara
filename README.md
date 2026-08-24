@@ -21,6 +21,7 @@ Supports single sms, bulk sms, delivery receipt and MO processing and balance en
 
 ## Getting Daraja Credentials
 Create a developer account at [Tiara Connect Developer Portal](https://app.tiaraconnect.io/#/signup)
+
 Documentation at [Tiara Connect Documentation](https://tiaraconnect.io/developers?section=intro)
 
 ## Installation
@@ -60,10 +61,11 @@ connect-timeout=
 | read-timeout                   | Time in seconds after which if a response has not come from the gateway, the calling application drops |
 
 ### Usage
-- You are ready to use the library.
+- You are ready to use the library. It is a plug-and-play library.
 
 #### Send Single SMS
 - on your caller logic use the __sendSingle()__ method to send single SMS.
+- This method will use the available configs.
 
 ```java
 import io.github.kathukyabrian.core.Tiara;
@@ -116,6 +118,7 @@ public class TestController {
 
 #### Send Bulk SMS
 - on your caller logic use the __sendBulk()__ method to send single SMS.
+- This method will use the available configs.
 ```java
 package com.example.demo;
 
