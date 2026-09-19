@@ -30,10 +30,10 @@ For Maven:
 <dependency>
     <groupId>io.github.kathukyabrian</groupId>
     <artifactId>tiara</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
-Latest Version: 1.0.1
+Latest Version: 1.0.2
 
 ## Quick Start
 ### Configuration
