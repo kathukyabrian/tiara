@@ -185,7 +185,6 @@ public class TestController {
 }
 ```
 
-
 #### Check Balance
 - on your caller logic use the __getBalance()__ method to get balance for the current account(API Key owner).
 ```java
